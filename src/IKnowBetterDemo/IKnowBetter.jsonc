@@ -1,0 +1,35 @@
+/*
+  If you're seeing this configuration file, it probably means your project is using IKnowBetter,
+  which is a special compiler task that enables you to override protection levels on libraries you reference.
+  Your project needs to include the IKnowBetter NuGet package for this configuration file to do anything!
+  Populate the array in this file to direct IKnowBetter. Options available are:
+  - FullyUnlockClass (Make a class and all its methods, fields and subtypes public)
+  - UnsealClass (Remove 'sealed' from a class so you an override it)
+  - MakeClassPublic (Make a class public so you can instantiate it)
+  - Ma
+*/
+{
+  "IKnowBetter": [
+    {
+      "IKnowBetter": "UnsealClass",
+      "Assembly": "IKnowBetterClassLibrary",
+      "Class":"IKnowBetterClassLibrary.SealedClass"
+    },
+    {
+      "IKnowBetter": "MakeClassPublic",
+      "Assembly": "IKnowBetterClassLibrary",
+      "Class":"IKnowBetterClassLibrary.PrivateClass"
+    },
+    {
+      "IKnowBetter": "FullyUnlockClass",
+      "Assembly": "IKnowBetterClassLibrary",
+      "Class":"IKnowBetterClassLibrary.LockedClass"
+    },
+    {
+      "IKnowBetter": "MakeMethodPublic",
+      "Assembly": "IKnowBetterClassLibrary",
+      "Class":"IKnowBetterClassLibrary.ClassWithPrivateMethod",
+      "Method": "GetString"
+    }
+  ]
+}
