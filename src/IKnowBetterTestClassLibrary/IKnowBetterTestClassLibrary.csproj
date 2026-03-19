@@ -4,6 +4,10 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageId>BoxesNLines.IKnowBetterTestClassLibrary</PackageId>
+        <Title>IKnowBetter Test Class Library</Title>
+        <Authors>Boxes'n'Lines</Authors>
+        <Description>This is the class library package used by the IKnowBetter demo - it's only intended to be used for testing and demo purposes.</Description>
     </PropertyGroup>
 
 </Project>

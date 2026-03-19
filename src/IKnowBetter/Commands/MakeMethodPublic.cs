@@ -2,6 +2,10 @@ using Mono.Cecil;
 
 namespace IKnowBetter.Commands;
 
+/// <summary>
+/// Make a method public.
+/// Note that get/set properties are considered methods in this context.
+/// </summary>
 public class MakeMethodPublic : IIKnowBetterCommand
 {
     private readonly ConfigurationComand _command;

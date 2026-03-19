@@ -6,6 +6,10 @@
         <Nullable>enable</Nullable>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <DefaultItemExcludes>$(DefaultItemExcludes);artifacts\**\*</DefaultItemExcludes>
+        <Version>0.0.1</Version>
+        <Title>IKnowBetter</Title>
+        <PackageId>BoxesNLines.IKnowBetter</PackageId>
+        <Authors>Boxes'n'Lines</Authors>
     </PropertyGroup>
 
     <ItemGroup>

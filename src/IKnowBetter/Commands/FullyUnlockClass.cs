@@ -2,6 +2,9 @@ using Mono.Cecil;
 
 namespace IKnowBetter.Commands;
 
+/// <summary>
+/// Fully unlock a class, including making it public, unsealing it and making all methods and fields public.
+/// </summary>
 public class FullyUnlockClass : IIKnowBetterCommand
 {
     private readonly ConfigurationComand _command;

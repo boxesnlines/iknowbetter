@@ -29,23 +29,15 @@ public class WeaverTask : Task
     /// <returns></returns>
     public override bool Execute()
     {
-        // List<string> classesToMakePublic = ["IKnowBetterTestClassLibrary.PrivateClass", "IKnowBetterTestClassLibrary.InternalClass"];
-        // List<string> classesToUnseal = ["IKnowBetterTestClassLibrary.SealedClass"];
-        // List<string> classesToFullyUnlock = ["IKnowBetterTestClassLibrary.LockedClass"];
-        // List<(string, string)> methodsToMakePublic = [("IKnowBetterTestClassLibrary.ClassWithPrivateMethod","GetString")];
-        
         BuildEngine.LogMessageEvent(new BuildMessageEventArgs($"*** IKnowBetter - Code Weaving Started ({TargetAssemblyPath})", string.Empty, string.Empty, MessageImportance.High));
 
         // Set up code weaving
-        InMemoryAssemblyResolver resolver = new();
-        resolver.AddSearchDirectory(TargetAssemblyPath);
-
         ReaderParameters readerParameters = new()
-        {
-            AssemblyResolver = resolver,
+        { 
             ReadingMode = ReadingMode.Immediate,
-            InMemory = true
+            InMemory = true,
         };
+        
         foreach (ITaskItem referencePath in ReferencePaths)
         {
             string referenceAssemblyPath = referencePath.ItemSpec;
@@ -72,30 +64,6 @@ public class WeaverTask : Task
         {
             command.Command.Execute(_referencedAssembles, LogMessage);
         }
-
-        // // Make methods public
-        // foreach ((string className, string methodName) methodToMakePublic in methodsToMakePublic)
-        // {
-        //     MakeMethodPublic(methodToMakePublic.className, methodToMakePublic.methodName);
-        // }
-        //
-        // // Make classes public
-        // foreach (string className in classesToMakePublic)
-        // {
-        //     MakeClassPublic(className);
-        // }
-        //
-        // // Unseal classes
-        // foreach (string className in classesToUnseal)
-        // {
-        //     UnsealClass(className);
-        // }
-        //
-        // // Fully unlock classes
-        // foreach (string className in classesToFullyUnlock)
-        // {
-        //     FullyUnlockClass(className);
-        // }
         
         // Now tidy up after ourselves
         foreach ((string path, AssemblyDefinition assembly) referencedAssembly in _referencedAssembles)
@@ -104,121 +72,6 @@ public class WeaverTask : Task
         }
         
         return true;
-    }
-
-    /// <summary>
-    /// Make a class public so it can be instantiated by a consumer.
-    /// </summary>
-    /// <param name="classToMakePublic">Fully qualified name of the class, including namespace.</param>
-    private void MakeClassPublic(string classToMakePublic) {
-        foreach ((string path, AssemblyDefinition assembly) assembly in _referencedAssembles)
-        {
-            TypeDefinition? typeForChange = assembly.assembly.MainModule.GetType(classToMakePublic);
-            if (typeForChange is not null)
-            {
-                typeForChange.IsPublic = true;
-                
-                // Internal types are modeled as nested private types, so we make all nested types public too
-                // This side-effect could be unexpected, but it's likely necessary in any scenario where nested types are involved
-                foreach (TypeDefinition? type in typeForChange.NestedTypes)
-                {
-                    type.IsPublic = true;
-                }
-                
-                assembly.assembly.Write(assembly.path);
-                LogMessage($"Class {classToMakePublic} successfully made public.");
-            }
-        }
-    }
-
-    /// <summary>
-    /// Make a method public.
-    /// Note that get/set properties are considered methods in this context.
-    /// </summary>
-    /// <param name="className">Fully qualified class name (including namespace)</param>
-    /// <param name="methodName">Method name</param>
-    private void MakeMethodPublic(string className, string methodName)
-    {
-        LogMessage($"Attempting to make {className}.{methodName} public.");
-        foreach ((string path, AssemblyDefinition assembly) assembly in _referencedAssembles)
-        {
-            LogMessage($"Checking {assembly.assembly.Name}");
-            TypeDefinition? typeForChange = assembly.assembly.MainModule.GetType(className);
-            if (typeForChange is not null)
-            {
-                    LogMessage($"Found type {className}");
-                    //var resolvedType = typeReference.Resolve();
-                    MethodDefinition? method = typeForChange.Methods.SingleOrDefault(x => x.Name == methodName);
-                    if (method is not null)
-                    {
-                        method.IsPublic = true;
-                        assembly.assembly.Write(assembly.path);
-                        LogMessage($"Method {className}.{methodName} successfully made public.");
-                    }
-
-                    return; // Return if we found the type - even if we didn't find the method we're not going to
-            }
-        }
-    }
-
-    /// <summary>
-    /// Fully unlock a class, including making it public, unsealing it and making all methods and fields public.
-    /// </summary>
-    /// <param name="classToUnseal">Fully qualified name of class to unlock (including namespace)</param>
-    private void FullyUnlockClass(string classToUnseal)
-    {
-        foreach ((string path, AssemblyDefinition assembly) assembly in _referencedAssembles)
-        {
-            TypeDefinition? typeForChange = assembly.assembly.MainModule.GetType(classToUnseal);
-            if (typeForChange is not null)
-            {
-                typeForChange.IsPublic = true; // Make public
-                typeForChange.Attributes &= ~TypeAttributes.Sealed; // Unseal
-                
-                // Internal types are modeled as nested private types, so we make all nested types public too
-                // This side-effect could be unexpected, but it's likely necessary in any scenario where nested types are involved
-                foreach (TypeDefinition? type in typeForChange.NestedTypes)
-                {
-                    type.IsPublic = true;
-                }
-                
-                // We remove sealed but not abstract/virtual, since those would very likely cause bad side effects
-                
-                // Now make all methods, fields and properties public too
-                // Note that get/set properties are mapped as methods, so covered here
-                foreach (MethodDefinition? method in typeForChange.Methods)
-                {
-                    method.IsPublic = true;
-                }
-
-                foreach (FieldDefinition? field in typeForChange.Fields)
-                {
-                    field.IsPublic = true;
-                }
-                
-                assembly.assembly.Write(assembly.path);
-                LogMessage($"Class {typeForChange} successfully fully unlocked.");
-                return;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removed "sealed" from a class so that it can be extended.
-    /// </summary>
-    /// <param name="classToUnlock">Full name of class, including namespace</param>
-    private void UnsealClass(string classToUnlock)
-    {
-        foreach ((string path, AssemblyDefinition assembly) assembly in _referencedAssembles)
-        {
-            TypeDefinition? typeForChange = assembly.assembly.MainModule.GetType(classToUnlock);
-            if (typeForChange is not null)
-            {
-                typeForChange.Attributes &= ~TypeAttributes.Sealed;
-                assembly.assembly.Write(assembly.path);
-                LogMessage($"Class {typeForChange} successfully unsealed.");
-            }
-        }
     }
     
     /// <summary>
@@ -229,20 +82,5 @@ public class WeaverTask : Task
     private void LogMessage(string message)
     {
         BuildEngine.LogMessageEvent(new BuildMessageEventArgs($"** IKB: {message}", string.Empty, string.Empty, MessageImportance.High));
-    }
-
-    private sealed class InMemoryAssemblyResolver : DefaultAssemblyResolver
-    {
-        public override AssemblyDefinition Resolve(AssemblyNameReference name)
-        {
-            ReaderParameters readerParameters = new()
-            {
-                AssemblyResolver = this,
-                ReadingMode = ReadingMode.Immediate,
-                InMemory = true
-            };
-
-            return base.Resolve(name, readerParameters);
-        }
     }
 }

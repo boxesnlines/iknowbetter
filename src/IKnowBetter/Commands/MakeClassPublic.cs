@@ -2,6 +2,9 @@ using Mono.Cecil;
 
 namespace IKnowBetter.Commands;
 
+/// <summary>
+/// Make a class public so it can be instantiated by a consumer.
+/// </summary>
 public class MakeClassPublic : IIKnowBetterCommand
 {
     private readonly ConfigurationComand _command;

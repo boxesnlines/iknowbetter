@@ -2,6 +2,9 @@ using Mono.Cecil;
 
 namespace IKnowBetter.Commands;
 
+/// <summary>
+/// Removed "sealed" from a class so that it can be extended.
+/// </summary>
 public class UnsealClass : IIKnowBetterCommand
 {
     private readonly ConfigurationComand _command;
