@@ -1,3 +1,6 @@
+using System.Configuration;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Build.Framework;
 using Mono.Cecil;
 using Task = Microsoft.Build.Utilities.Task;
@@ -12,6 +15,7 @@ public class WeaverTask : Task
 {
     public string TargetAssemblyPath { get; set; } = string.Empty;
     public ITaskItem[] ReferencePaths { get; set; } = Array.Empty<ITaskItem>();
+    public string ConfigPath { get; set; } = string.Empty;
 
     /// <summary>
     /// Collection to store referenced assemblies, resolved at the start of the execution process.
@@ -25,12 +29,14 @@ public class WeaverTask : Task
     /// <returns></returns>
     public override bool Execute()
     {
-        List<string> classesToMakePublic = ["IKnowBetterTestClassLibrary.PrivateClass", "IKnowBetterTestClassLibrary.InternalClass"];
-        List<string> classesToUnseal = ["IKnowBetterTestClassLibrary.SealedClass"];
-        List<string> classesToFullyUnlock = ["IKnowBetterTestClassLibrary.LockedClass"];
-        List<(string, string)> methodsToMakePublic = [("IKnowBetterTestClassLibrary.ClassWithPrivateMethod","GetString")];
+        // List<string> classesToMakePublic = ["IKnowBetterTestClassLibrary.PrivateClass", "IKnowBetterTestClassLibrary.InternalClass"];
+        // List<string> classesToUnseal = ["IKnowBetterTestClassLibrary.SealedClass"];
+        // List<string> classesToFullyUnlock = ["IKnowBetterTestClassLibrary.LockedClass"];
+        // List<(string, string)> methodsToMakePublic = [("IKnowBetterTestClassLibrary.ClassWithPrivateMethod","GetString")];
+        
         BuildEngine.LogMessageEvent(new BuildMessageEventArgs($"*** IKnowBetter - Code Weaving Started ({TargetAssemblyPath})", string.Empty, string.Empty, MessageImportance.High));
 
+        // Set up code weaving
         InMemoryAssemblyResolver resolver = new();
         resolver.AddSearchDirectory(TargetAssemblyPath);
 
@@ -55,31 +61,43 @@ public class WeaverTask : Task
             LogMessage("No matching referenced assemblies found to weave.");
             return true;
         }
-
-        // Make methods public
-        foreach ((string className, string methodName) methodToMakePublic in methodsToMakePublic)
-        {
-            MakeMethodPublic(methodToMakePublic.className, methodToMakePublic.methodName);
-        }
-
-        // Make classes public
-        foreach (string className in classesToMakePublic)
-        {
-            MakeClassPublic(className);
-        }
-
-        // Unseal classes
-        foreach (string className in classesToUnseal)
-        {
-            UnsealClass(className);
-        }
         
-        // Fully unlock classes
-        foreach (string className in classesToFullyUnlock)
+        // Now retrieve configuration and execute commands
+        if (!File.Exists(ConfigPath)) throw new ConfigurationException("Configuration file not found. Please add IKnowBetter.jsonc to the root of the project being built.");
+        List<ConfigurationComand>? configuration = JsonSerializer.Deserialize<List<ConfigurationComand>>(File.ReadAllText(ConfigPath), new JsonSerializerOptions
         {
-            FullyUnlockClass(className);
+            ReadCommentHandling = JsonCommentHandling.Skip
+        });
+        foreach (ConfigurationComand command in configuration)
+        {
+            command.Command.Execute(_referencedAssembles, LogMessage);
         }
+
+        // // Make methods public
+        // foreach ((string className, string methodName) methodToMakePublic in methodsToMakePublic)
+        // {
+        //     MakeMethodPublic(methodToMakePublic.className, methodToMakePublic.methodName);
+        // }
+        //
+        // // Make classes public
+        // foreach (string className in classesToMakePublic)
+        // {
+        //     MakeClassPublic(className);
+        // }
+        //
+        // // Unseal classes
+        // foreach (string className in classesToUnseal)
+        // {
+        //     UnsealClass(className);
+        // }
+        //
+        // // Fully unlock classes
+        // foreach (string className in classesToFullyUnlock)
+        // {
+        //     FullyUnlockClass(className);
+        // }
         
+        // Now tidy up after ourselves
         foreach ((string path, AssemblyDefinition assembly) referencedAssembly in _referencedAssembles)
         {
             referencedAssembly.assembly.Dispose();

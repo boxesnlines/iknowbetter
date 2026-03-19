@@ -14,6 +14,7 @@
         <WeaverTask
                 TargetAssemblyPath="$(TargetPath)"
                 ReferencePaths="@(ReferencePath)"
+                ConfigPath="$(MSBuildProjectDirectory)\IKnowBetter.jsonc"
         />
     </Target>
 </Project>

@@ -58,6 +58,14 @@ Example configuration:
 
 The build logs should show IKnowBetter taking effect during the build. After the build, the classes you specified will be unlocked according to the configuration!
 
+5. **IMPORTANT - Drop caches from your IDE**
+
+Your IDE will probably cache the protection levels of the classes modified by IKnowBetter, causing it to continue to show warnings.
+
+The caches should eventually update by themselves, but you probably don't want to wait. To refresh the caches:
+- In Rider: `File > Invalidate Caches... > Invalidate and Restart`
+- In Visual Studio: Delete the `C:\Users\<you>\AppData\Local\Microsoft\VisualStudio\<version>\ComponentModelCache` folder
+
 # Warnings
 If you Know Better you probably shouldn't need to be told these things, but here are some warnings and disclaimers:
 

@@ -6,30 +6,33 @@
   - FullyUnlockClass (Make a class and all its methods, fields and subtypes public)
   - UnsealClass (Remove 'sealed' from a class so you an override it)
   - MakeClassPublic (Make a class public so you can instantiate it)
-  - Ma
+  - MakeMethodPublic (Make a single method public so you can call it. Note that property getters and setters are considered methods.)
 */
-{
-  "IKnowBetter": [
-    {
-      "IKnowBetter": "UnsealClass",
-      "Assembly": "IKnowBetterClassLibrary",
-      "Class":"IKnowBetterClassLibrary.SealedClass"
-    },
-    {
-      "IKnowBetter": "MakeClassPublic",
-      "Assembly": "IKnowBetterClassLibrary",
-      "Class":"IKnowBetterClassLibrary.PrivateClass"
-    },
-    {
-      "IKnowBetter": "FullyUnlockClass",
-      "Assembly": "IKnowBetterClassLibrary",
-      "Class":"IKnowBetterClassLibrary.LockedClass"
-    },
-    {
-      "IKnowBetter": "MakeMethodPublic",
-      "Assembly": "IKnowBetterClassLibrary",
-      "Class":"IKnowBetterClassLibrary.ClassWithPrivateMethod",
-      "Method": "GetString"
-    }
-  ]
-}
+[
+  {
+    "IKnowBetter": "UnsealClass", // UnsealClass/MakeClassPublic/MakeMethodPublic/FullyUnlockClass
+    "Assembly": "IKnowBetterTestClassLibrary", // Typically the same name as the DLL
+    "Class":"IKnowBetterTestClassLibrary.SealedClass" // Use the fully-qualified name of the class
+  },
+  {
+    "IKnowBetter": "MakeClassPublic",
+    "Assembly": "IKnowBetterTestClassLibrary",
+    "Class":"IKnowBetterTestClassLibrary.PrivateClass"
+  },
+  {
+    "IKnowBetter": "MakeClassPublic",
+    "Assembly": "IKnowBetterTestClassLibrary",
+    "Class":"IKnowBetterTestClassLibrary.InternalClass" // MakeClassPublic works on internal classes as well as private!
+  },
+  {
+    "IKnowBetter": "FullyUnlockClass",
+    "Assembly": "IKnowBetterTestClassLibrary",
+    "Class":"IKnowBetterTestClassLibrary.LockedClass"
+  },
+  {
+    "IKnowBetter": "MakeMethodPublic",
+    "Assembly": "IKnowBetterTestClassLibrary",
+    "Class":"IKnowBetterTestClassLibrary.ClassWithPrivateMethod",
+    "Method": "GetString"
+  }
+]
