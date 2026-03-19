@@ -11,12 +11,10 @@
     <ItemGroup>
       <ProjectReference Include="..\IKnowBetter\IKnowBetter.csproj" />
     </ItemGroup>
+    
 
     <ItemGroup>
-      <Reference Include="IKnowBetterTestClassLibrary">
-        <HintPath>..\IKnowBetterTestClassLibrary\bin\Release\net10.0\IKnowBetterTestClassLibrary.dll</HintPath>
-        <Private>true</Private>
-      </Reference>
+      <PackageReference Include="BoxesNLines.IKnowBetterTestClassLibrary" Version="1.0.0" />
     </ItemGroup>
 
     <!--

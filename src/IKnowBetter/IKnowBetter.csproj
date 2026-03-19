@@ -12,6 +12,10 @@
         <Authors>Boxes'n'Lines</Authors>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>IKnowBetter allows you to adjust the protection levels of 3rd party libraries without needing access to their source.</Description>
+        <PackageProjectUrl>https://github.com/boxesnlines/iknowbetter</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/boxesnlines/iknowbetter</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,5 +26,8 @@
 
     <ItemGroup>
         <None Include="$(PkgMono_Cecil)\lib\netstandard2.0\Mono.Cecil*.dll" Pack="true" PackagePath="lib\net10.0\" Visible="false"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>

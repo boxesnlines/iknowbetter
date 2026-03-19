@@ -11,6 +11,8 @@
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/boxesnlines/iknowbetter</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/boxesnlines/iknowbetter</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
