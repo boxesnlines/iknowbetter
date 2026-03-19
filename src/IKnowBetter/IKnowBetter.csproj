@@ -10,6 +10,8 @@
         <Title>IKnowBetter</Title>
         <PackageId>BoxesNLines.IKnowBetter</PackageId>
         <Authors>Boxes'n'Lines</Authors>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

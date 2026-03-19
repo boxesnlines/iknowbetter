@@ -8,6 +8,12 @@
         <Title>IKnowBetter Test Class Library</Title>
         <Authors>Boxes'n'Lines</Authors>
         <Description>This is the class library package used by the IKnowBetter demo - it's only intended to be used for testing and demo purposes.</Description>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>
