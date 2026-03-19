@@ -9,23 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\IKnowBetter\IKnowBetter.csproj" />
-    </ItemGroup>
-    
-
-    <ItemGroup>
+      <PackageReference Include="BoxesNLines.IKnowBetter" Version="0.0.2" />
       <PackageReference Include="BoxesNLines.IKnowBetterTestClassLibrary" Version="1.0.0" />
     </ItemGroup>
-
-    <!--
-      Local development path: import the same buildTransitive targets file used by NuGet
-      so the task also runs when consuming IKnowBetter through ProjectReference.
-    -->
-    <PropertyGroup>
-        <IKnowBetterTaskAssembly>$(MSBuildThisFileDirectory)..\IKnowBetter\bin\$(Configuration)\net10.0\IKnowBetter.dll</IKnowBetterTaskAssembly>
-    </PropertyGroup>
-
-    <Import Project="..\IKnowBetter\buildTransitive\IKnowBetter.targets"
-            Condition="Exists('..\IKnowBetter\buildTransitive\IKnowBetter.targets')" />
-
 </Project>

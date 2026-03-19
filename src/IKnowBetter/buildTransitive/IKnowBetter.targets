@@ -9,7 +9,7 @@
             Condition="Exists('$(IKnowBetterTaskAssembly)')"/>
 
     <Target Name="RunWeaverTask"
-            BeforeTargets="CoreCompile"
+            AfterTargets="CoreCompile"
             Condition="Exists('$(IKnowBetterTaskAssembly)')">
         <WeaverTask
                 TargetAssemblyPath="$(TargetPath)"
